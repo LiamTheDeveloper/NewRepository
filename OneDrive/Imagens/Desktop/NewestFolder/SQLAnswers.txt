@@ -1,0 +1,65 @@
+1.) 
+The Length_in_sec field contains data pertaining to phone call durations made by calling agents (presumably out of a call center of sorts). 
+The data type, smallint, can hold integer values within the range -32,768 to 32,767. 
+
+Considering that the unit of measurement for this field is seconds, specifically, the amount of seconds that a phonecall is running for - it's safe to assume that hitting the smallint limit will be quite unlikely as 32,767 seconds translates to just over 9 hours, which is an incredibly long amount of time for 1 phone call to take place between a calling agent and a client.
+
+2.)
+Takalani Wood
+
+SELECT
+ca.name, cl.length_in_sec
+FROM
+callingagent ca left outer join callinglogs cl on ca.id = cl.caller_id
+WHERE 
+length_in_sec is not null
+ORDER BY
+cl.length_in_sec desc
+limit 1
+
+
+3.)
+SELECT 
+    ca.id AS "Caller ID",
+    ca.Name,
+    COALESCE(COUNT(cl.caller_id), 0) AS "Call Count"
+FROM 
+    callingagent ca
+LEFT JOIN 
+    callinglogs cl
+    ON ca.id = cl.caller_id 
+    AND cl.length_in_sec >= 1  -- Only count calls that are at least 1 second long
+GROUP BY 
+    ca.id, ca.Name
+ORDER BY 
+COALESCE(COUNT(cl.caller_id), 0) desc;
+
+
+4.) 
+JHB
+
+SELECT ca.location,
+       AVG(cl.length_in_sec) AS "Average Call Length"
+FROM callingagent ca
+LEFT JOIN callinglogs cl ON ca.id = cl.caller_id
+WHERE cl.length_in_sec >= 1 -- Only count calls that are at least 1 second long
+
+GROUP BY ca.location
+ORDER BY "Average Call Length" DESC
+LIMIT 1
+
+
+5.) 
+Hendrik Padayachee 
+
+SELECT
+ca.name, 
+cl.start_timestamp, 
+cl.length_in_sec
+FROM
+callingagent ca left outer join callinglogs cl on ca.id = cl.caller_id
+WHERE 
+length_in_sec is not null
+ORDER BY
+cl.start_timestamp asc
+limit 1
